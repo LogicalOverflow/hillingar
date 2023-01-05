@@ -9,7 +9,7 @@ in rec {
   configureSrcFor = unikernelName: mirageDir: src: target:
     # Get mirage tool and dependancies from opam.
     # We could also get them from nixpkgs but they may not be up to date.
-    let configure-scope = queryToScope { } { mirage = "*"; }; in
+    let configure-scope = queryToScope { } { "ocaml" = "4.14.1"; "mirage" = "*"; }; in
     pkgs.stdenv.mkDerivation {
       name = "configured-src";
       # only copy these files and only rebuild when they change
@@ -49,7 +49,7 @@ in rec {
   # read all the opam files from the configured source and build the ${unikernelName} package
   mkScopeOpam = unikernelName: mirageDir: depexts: monorepoQuery: src:
     let
-      scope = buildOpamProject { } unikernelName src { };
+      scope = buildOpamProject { } unikernelName src { "ocaml" = "4.14.1"; };
       overlay = final: prev: {
         "${unikernelName}" = prev.${unikernelName}.overrideAttrs (_ :
           let monorepo-scope = mkScopeMonorepo monorepoQuery src; in {
